@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Travel Log</string>
+    <string name="travels_screen_title">Travels</string>
+    <string name="travels_screen_button_add">Add Travel</string>
+</resources>
