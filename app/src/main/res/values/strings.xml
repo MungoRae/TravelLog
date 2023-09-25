@@ -2,4 +2,8 @@
     <string name="app_name">Travel Log</string>
     <string name="travels_screen_title">Travels</string>
     <string name="travels_screen_button_add">Add Travel</string>
+    <string name="add_travel_title">Add Travel</string>
+    <string name="add_travel_button_confirm">Confirm</string>
+    <string name="add_travel_label_name">Name</string>
+    <string name="add_travel_label_description">Description</string>
 </resources>

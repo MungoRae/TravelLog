@@ -1,5 +1,6 @@
 package uk.me.mungorae.travellog.travelslist
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,24 +14,35 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import uk.me.mungorae.travellog.R
 import uk.me.mungorae.travellog.data.Travel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TravelsScreen() {
+fun TravelsScreen(
+    onAddTravel: () -> Unit,
+    viewModel: TravelsViewModel = hiltViewModel()
+) {
     Scaffold(
-        topBar = {TopAppBar(title = { Text(text = stringResource(id = R.string.travels_screen_title)) })},
+        topBar = {
+            TopAppBar(title = {
+                Text(text = stringResource(id = R.string.travels_screen_title))
+            })
+        },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }) {
+            FloatingActionButton(onClick = onAddTravel) {
                 Icon(Icons.Filled.Add, stringResource(id = R.string.travels_screen_button_add))
             }
         },
         modifier = Modifier.fillMaxSize(),
     ) {
-        TravelsContent(travels = emptyList(), modifier = Modifier.padding(it))
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        TravelsContent(travels = uiState.travels, modifier = Modifier.padding(it))
     }
 }
 
@@ -41,7 +53,15 @@ fun TravelsContent(
 ) {
     LazyColumn(modifier = modifier) {
         items(travels) { travel ->
-            Text(travel.toString())
+            TravelItem(travel = travel)
         }
+    }
+}
+
+@Composable
+fun TravelItem(travel: Travel) {
+    Column {
+        Text(text = travel.name)
+        Text(text = travel.description)
     }
 }

@@ -1,3 +1,3 @@
 package uk.me.mungorae.travellog.data
 
-data class Travel(val name: String)
+data class Travel(val name: String, val description: String)
