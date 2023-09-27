@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import uk.me.mungorae.travellog.R
+import uk.me.mungorae.travellog.util.DateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,12 +66,7 @@ fun AddTravelContent(
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val datePicker = DatePickerDialog(
-        LocalContext.current,
-        { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-            onDatePickerDateSelected(selectedYear, selectedMonth + 1, selectedDayOfMonth)
-        }, uiState.date.year(), uiState.date.month() - 1, uiState.date.dayOfMonth()
-    )
+
     Column(modifier = modifier.padding(horizontal = 8.dp)) {
         TextField(
             label = { Text(text = stringResource(id = R.string.add_travel_label_name)) },
@@ -84,27 +80,38 @@ fun AddTravelContent(
             onValueChange = onDescriptionChanged,
             modifier = Modifier.padding(top = 8.dp),
         )
-        TextField(
-            value = uiState.date.toLongDateString(),
-            onValueChange = {},
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .clickable {
-                    Log.d("TIMBER", "Showing!")
-                    datePicker.show()
-                },
-            readOnly = true,
-            enabled = false,
-            colors = TextFieldDefaults.textFieldColors(
-                disabledTextColor = LocalContentColor.current,
-                disabledLabelColor = LocalContentColor.current,
-            ),
-            label = {
-                Text(text = stringResource(id = R.string.add_travel_label_date))
-            },
-        )
+        DateTextField(date = uiState.date, onDateChanged = onDatePickerDateSelected)
         Button(onClick = onSubmit, modifier = Modifier.padding(top = 8.dp)) {
             Text(text = stringResource(id = R.string.add_travel_button_confirm))
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DateTextField(date: DateTime, onDateChanged: (Int, Int, Int) -> Unit) {
+    val datePicker = DatePickerDialog(
+        LocalContext.current,
+        { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
+            onDateChanged(selectedYear, selectedMonth + 1, selectedDayOfMonth)
+        }, date.year(), date.month() - 1, date.dayOfMonth()
+    )
+    TextField(
+        value = date.toLongDateString(),
+        onValueChange = {},
+        modifier = Modifier
+            .padding(top = 8.dp)
+            .clickable {
+                datePicker.show()
+            },
+        readOnly = true,
+        enabled = false,
+        colors = TextFieldDefaults.textFieldColors(
+            disabledTextColor = LocalContentColor.current,
+            disabledLabelColor = LocalContentColor.current,
+        ),
+        label = {
+            Text(text = stringResource(id = R.string.add_travel_label_date))
+        },
+    )
 }
