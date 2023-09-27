@@ -15,6 +15,7 @@ import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import uk.me.mungorae.travellog.MainActivity
+import cucumber.api.PendingException
 
 @HiltAndroidTest
 class Steps(
@@ -56,7 +57,6 @@ class Steps(
 
     @Then("I see my travel item")
     fun i_see_my_travel_item() {
-        onRoot().printToLog("TESTING")
         onNodeWithText("Travel name").assertIsDisplayed()
         onNodeWithText("Travel Description").assertIsDisplayed()
     }
@@ -70,5 +70,15 @@ class Steps(
             )
         )
         onNodeWithContentDescription("Add Travel").performClick()
+    }
+
+    @When("^I press the current date$")
+    fun iPressTheCurrentDate() {
+        onNodeWithText("Travel date").assertIsDisplayed().performClick()
+    }
+
+    @Then("^I can select the date I want from a calendar$")
+    fun iCanSelectTheDateIWantFromACalendar() {
+        onNodeWithText("05/04/19289").assertIsDisplayed().performClick()
     }
 }

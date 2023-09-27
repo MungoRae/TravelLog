@@ -6,4 +6,5 @@
     <string name="add_travel_button_confirm">Confirm</string>
     <string name="add_travel_label_name">Name</string>
     <string name="add_travel_label_description">Description</string>
+    <string name="add_travel_label_date">Date</string>
 </resources>
