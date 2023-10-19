@@ -16,9 +16,9 @@ class AppAndroidJUnitRunner : CucumberAndroidJUnitRunner() {
     override fun onCreate(bundle: Bundle) {
         bundle.putString(
             "plugin",
-            getPluginConfigurationString()
+            getPluginConfigurationString(),
         ) // we programmatically create the plugin configuration
-        //it crashes on Android R without it
+        // it crashes on Android R without it
         File(getAbsoluteFilesPath()).mkdirs()
         super.onCreate(bundle)
     }
@@ -29,11 +29,10 @@ class AppAndroidJUnitRunner : CucumberAndroidJUnitRunner() {
      *
      * @return the plugin string for the configuration, which contains XML, HTML and JSON paths
      */
-    private fun getPluginConfigurationString(): String? {
+    private fun getPluginConfigurationString(): String {
         val cucumber = "cucumber"
         val separator = "--"
-        return "junit:" + getCucumberXml(cucumber) + separator +
-                "html:" + getCucumberHtml(cucumber)
+        return "junit:" + getCucumberXml(cucumber) + separator + "html:" + getCucumberHtml(cucumber)
     }
 
     private fun getCucumberHtml(cucumber: String): String {
@@ -50,8 +49,7 @@ class AppAndroidJUnitRunner : CucumberAndroidJUnitRunner() {
      * @return the absolute path for the report files
      */
     private fun getAbsoluteFilesPath(): String {
-
-        //sdcard/Android/data/cucumber.cukeulator
+        // sdcard/Android/data/cucumber.cukeulator
         val directory = targetContext.getExternalFilesDir(null)
         return File(directory, "reports").absolutePath
     }
@@ -59,12 +57,12 @@ class AppAndroidJUnitRunner : CucumberAndroidJUnitRunner() {
     @Throws(
         ClassNotFoundException::class,
         IllegalAccessException::class,
-        InstantiationException::class
+        InstantiationException::class,
     )
     override fun newApplication(
         cl: ClassLoader?,
         className: String?,
-        context: Context?
+        context: Context?,
     ): Application? {
         return super.newApplication(cl, HiltTestApplication::class.java.name, context)
     }

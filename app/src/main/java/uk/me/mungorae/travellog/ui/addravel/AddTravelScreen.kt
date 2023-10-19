@@ -1,4 +1,4 @@
-package uk.me.mungorae.travellog.addravel
+package uk.me.mungorae.travellog.ui.addravel
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -7,7 +7,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import uk.me.mungorae.travellog.R
+import uk.me.mungorae.travellog.ui.reuseable.DateTextField
 import uk.me.mungorae.travellog.util.DateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,7 +59,7 @@ fun AddTravelScreen(
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = stringResource(id = R.string.add_travel_title)) })
-        }
+        },
     ) {
         AddTravelContent(
             modifier = Modifier.padding(it),
@@ -96,7 +96,7 @@ fun AddTravelContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(all = 8.dp)
+            .padding(all = 8.dp),
     ) {
         TextField(
             label = { Text(text = stringResource(id = R.string.add_travel_label_name)) },
@@ -113,7 +113,7 @@ fun AddTravelContent(
         DateTextField(date = uiState.date, onDateChanged = onDatePickerDateSelected)
         LazyRow(
             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {
                 ImagePreviewContainer {
@@ -129,9 +129,10 @@ fun AddTravelContent(
         }
         Spacer(modifier = Modifier.weight(1f))
         Button(
-            onClick = onSubmit, modifier = Modifier
+            onClick = onSubmit,
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
+                .padding(top = 8.dp),
         ) {
             Text(text = stringResource(id = R.string.add_travel_button_confirm))
         }
@@ -143,7 +144,7 @@ fun ImagePreviewContainer(content: @Composable () -> Unit) {
     Box(
         modifier = Modifier
             .size(width = 100.dp, height = 130.dp)
-            .clip(CircleShape.copy(all = CornerSize(4.dp)))
+            .clip(CircleShape.copy(all = CornerSize(4.dp))),
     ) {
         content()
     }
@@ -168,8 +169,8 @@ fun AddImageButton(onAddImagePressed: () -> Unit = {}) {
         Icon(
             painter = painterResource(id = R.drawable.add_photo),
             contentDescription = stringResource(
-                id = R.string.add_travel_button_add_photo
-            )
+                id = R.string.add_travel_button_add_photo,
+            ),
         )
     }
 }

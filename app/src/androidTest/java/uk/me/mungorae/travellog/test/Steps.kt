@@ -5,17 +5,14 @@ import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.compose.ui.test.printToLog
 import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import uk.me.mungorae.travellog.MainActivity
-import cucumber.api.PendingException
 
 @HiltAndroidTest
 class Steps(
@@ -28,8 +25,8 @@ class Steps(
         scenarioHolder.launch(
             Intent(
                 InstrumentationRegistry.getInstrumentation().targetContext,
-                MainActivity::class.java
-            )
+                MainActivity::class.java,
+            ),
         )
     }
 
@@ -66,8 +63,8 @@ class Steps(
         scenarioHolder.launch(
             Intent(
                 InstrumentationRegistry.getInstrumentation().targetContext,
-                MainActivity::class.java
-            )
+                MainActivity::class.java,
+            ),
         )
         onNodeWithContentDescription("Add Travel").performClick()
     }

@@ -1,4 +1,4 @@
-package uk.me.mungorae.travellog.travelslist
+package uk.me.mungorae.travellog.ui.travellist
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,13 +26,15 @@ import uk.me.mungorae.travellog.data.Travel
 @Composable
 fun TravelsScreen(
     onAddTravel: () -> Unit,
-    viewModel: TravelsViewModel = hiltViewModel()
+    viewModel: TravelsViewModel = hiltViewModel(),
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = {
-                Text(text = stringResource(id = R.string.travels_screen_title))
-            })
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.travels_screen_title))
+                },
+            )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddTravel) {

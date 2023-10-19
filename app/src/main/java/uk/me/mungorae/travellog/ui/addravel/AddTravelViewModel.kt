@@ -1,4 +1,4 @@
-package uk.me.mungorae.travellog.addravel
+package uk.me.mungorae.travellog.ui.addravel
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +16,7 @@ data class AddTravelUiState(
     val name: String = "",
     val description: String = "",
     val date: DateTime,
-    val isTravelSaved: Boolean = false
+    val isTravelSaved: Boolean = false,
 )
 
 @HiltViewModel
@@ -25,7 +25,7 @@ class AddTravelViewModel @Inject constructor(
     private val dateTimeProvider: DateTimeProvider,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
-        AddTravelUiState(date = dateTimeProvider.today())
+        AddTravelUiState(date = dateTimeProvider.today()),
     )
     val uiState: StateFlow<AddTravelUiState> = _uiState.asStateFlow()
 
@@ -48,10 +48,9 @@ class AddTravelViewModel @Inject constructor(
                 date = dateTimeProvider.createDateTimeFromYearMonthDay(
                     year,
                     month,
-                    day
-                )
+                    day,
+                ),
             )
         }
-
     }
 }

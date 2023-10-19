@@ -20,4 +20,3 @@ abstract class HiltModule {
     @Singleton
     abstract fun bindsDateTimeProvider(dt: DateTimeProvider.Impl): DateTimeProvider
 }
-

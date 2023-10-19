@@ -1,7 +1,6 @@
-package uk.me.mungorae.travellog.travelslist
+package uk.me.mungorae.travellog.ui.travellist
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +15,7 @@ data class TravelsUiState(val travels: List<Travel> = emptyList())
 
 @HiltViewModel
 class TravelsViewModel @Inject constructor(
-    private val travelsRepository: TravelsRepository
+    private val travelsRepository: TravelsRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TravelsUiState())

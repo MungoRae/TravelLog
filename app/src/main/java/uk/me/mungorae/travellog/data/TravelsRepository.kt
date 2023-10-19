@@ -1,6 +1,5 @@
 package uk.me.mungorae.travellog.data
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +13,7 @@ interface TravelsRepository {
 
     fun travelsStream(): StateFlow<List<Travel>>
 
-    class Impl @Inject constructor(): TravelsRepository {
+    class Impl @Inject constructor() : TravelsRepository {
         private val travels: MutableStateFlow<List<Travel>> = MutableStateFlow(emptyList())
         override fun createTravel(travel: Travel) {
             travels.update {

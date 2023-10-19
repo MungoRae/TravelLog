@@ -9,10 +9,10 @@ interface DateTimeProvider {
     fun today(): DateTime
 
     fun createDateTimeFromYearMonthDay(year: Int, month: Int, dayOfMonth: Int): DateTime {
-        return JavaTimeDateTime(LocalDate.of(year, month, dayOfMonth).atTime(0,0))
+        return JavaTimeDateTime(LocalDate.of(year, month, dayOfMonth).atTime(0, 0))
     }
 
-    class Impl @Inject constructor(private val clock: Clock): DateTimeProvider {
+    class Impl @Inject constructor(private val clock: Clock) : DateTimeProvider {
         override fun today(): DateTime {
             return JavaTimeDateTime(LocalDateTime.now(clock))
         }

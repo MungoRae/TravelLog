@@ -1,6 +1,5 @@
 package uk.me.mungorae.travellog.util
 
-
 interface DateTime {
 
     override fun toString(): String
@@ -12,5 +11,4 @@ interface DateTime {
     fun month(): Int
 
     fun dayOfMonth(): Int
-
 }

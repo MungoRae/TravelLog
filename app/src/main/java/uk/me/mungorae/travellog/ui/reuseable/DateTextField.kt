@@ -1,4 +1,4 @@
-package uk.me.mungorae.travellog.addravel
+package uk.me.mungorae.travellog.ui.reuseable
 
 import android.app.DatePickerDialog
 import android.widget.DatePicker
@@ -24,7 +24,10 @@ fun DateTextField(date: DateTime, onDateChanged: (Int, Int, Int) -> Unit) {
         LocalContext.current,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
             onDateChanged(selectedYear, selectedMonth + 1, selectedDayOfMonth)
-        }, date.year(), date.month() - 1, date.dayOfMonth()
+        },
+        date.year(),
+        date.month() - 1,
+        date.dayOfMonth(),
     )
     TextField(
         value = date.toLongDateString(),
