@@ -7,4 +7,6 @@
     <string name="add_travel_label_name">Name</string>
     <string name="add_travel_label_description">Description</string>
     <string name="add_travel_label_date">Date</string>
+    <string name="add_travel_button_add_photo">Add photo</string>
+    <string name="add_travel_image_description">Uploaded image %1$d</string>
 </resources>

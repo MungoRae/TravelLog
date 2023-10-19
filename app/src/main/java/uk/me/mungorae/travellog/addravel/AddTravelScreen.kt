@@ -1,29 +1,45 @@
 package uk.me.mungorae.travellog.addravel
 
-import android.app.DatePickerDialog
-import android.util.Log
-import android.widget.DatePicker
-import androidx.compose.foundation.clickable
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import uk.me.mungorae.travellog.R
 import uk.me.mungorae.travellog.util.DateTime
 
@@ -31,21 +47,29 @@ import uk.me.mungorae.travellog.util.DateTime
 @Composable
 fun AddTravelScreen(
     onTravelsUpdated: () -> Unit,
-    viewModel: AddTravelViewModel = hiltViewModel()
+    viewModel: AddTravelViewModel = hiltViewModel(),
 ) {
+    val (images, setImages) = remember { mutableStateOf<List<Uri>>(listOf()) }
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(),
+    ) {
+        setImages(images.plus(it))
+    }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = stringResource(id = R.string.add_travel_title)) })
         }
     ) {
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         AddTravelContent(
+            modifier = Modifier.padding(it),
             uiState,
+            images,
             viewModel::onNameChange,
             viewModel::onDescriptionChange,
             viewModel::onDateSelected,
+            { photoPickerLauncher.launch(PickVisualMediaRequest()) },
             viewModel::onSubmit,
-            modifier = Modifier.padding(it)
         )
 
         LaunchedEffect(key1 = uiState.isTravelSaved) {
@@ -56,18 +80,24 @@ fun AddTravelScreen(
     }
 }
 
+@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTravelContent(
-    uiState: AddTravelUiState,
-    onNameChanged: (String) -> Unit,
-    onDescriptionChanged: (String) -> Unit,
-    onDatePickerDateSelected: (Int, Int, Int) -> Unit,
-    onSubmit: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    uiState: AddTravelUiState = AddTravelUiState(date = PreviewDateTime()),
+    images: List<Uri> = emptyList(),
+    onNameChanged: (String) -> Unit = {},
+    onDescriptionChanged: (String) -> Unit = {},
+    onDatePickerDateSelected: (Int, Int, Int) -> Unit = { _, _, _ -> },
+    onAddImagePressed: () -> Unit = {},
+    onSubmit: () -> Unit = {},
 ) {
-
-    Column(modifier = modifier.padding(horizontal = 8.dp)) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(all = 8.dp)
+    ) {
         TextField(
             label = { Text(text = stringResource(id = R.string.add_travel_label_name)) },
             value = uiState.name,
@@ -81,37 +111,77 @@ fun AddTravelContent(
             modifier = Modifier.padding(top = 8.dp),
         )
         DateTextField(date = uiState.date, onDateChanged = onDatePickerDateSelected)
-        Button(onClick = onSubmit, modifier = Modifier.padding(top = 8.dp)) {
+        LazyRow(
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item {
+                ImagePreviewContainer {
+                    AddImageButton { onAddImagePressed() }
+                }
+            }
+            items(images.size) {
+                val uri = images[it]
+                ImagePreviewContainer {
+                    ImagePreview(uri = uri, count = it)
+                }
+            }
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            onClick = onSubmit, modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
             Text(text = stringResource(id = R.string.add_travel_button_confirm))
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateTextField(date: DateTime, onDateChanged: (Int, Int, Int) -> Unit) {
-    val datePicker = DatePickerDialog(
-        LocalContext.current,
-        { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-            onDateChanged(selectedYear, selectedMonth + 1, selectedDayOfMonth)
-        }, date.year(), date.month() - 1, date.dayOfMonth()
-    )
-    TextField(
-        value = date.toLongDateString(),
-        onValueChange = {},
+fun ImagePreviewContainer(content: @Composable () -> Unit) {
+    Box(
         modifier = Modifier
-            .padding(top = 8.dp)
-            .clickable {
-                datePicker.show()
-            },
-        readOnly = true,
-        enabled = false,
-        colors = TextFieldDefaults.textFieldColors(
-            disabledTextColor = LocalContentColor.current,
-            disabledLabelColor = LocalContentColor.current,
-        ),
-        label = {
-            Text(text = stringResource(id = R.string.add_travel_label_date))
-        },
+            .size(width = 100.dp, height = 130.dp)
+            .clip(CircleShape.copy(all = CornerSize(4.dp)))
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun ImagePreview(uri: Uri, count: Int) {
+    AsyncImage(
+        model = uri,
+        contentDescription = stringResource(id = R.string.add_travel_image_description, count),
+        contentScale = ContentScale.Crop,
     )
+}
+
+@Composable
+fun AddImageButton(onAddImagePressed: () -> Unit = {}) {
+    IconButton(
+        modifier = Modifier.fillMaxSize(),
+        colors = IconButtonDefaults.filledIconButtonColors(),
+        onClick = { onAddImagePressed() },
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.add_photo),
+            contentDescription = stringResource(
+                id = R.string.add_travel_button_add_photo
+            )
+        )
+    }
+}
+
+class PreviewDateTime : DateTime {
+    override fun toString(): String = "Preview"
+
+    override fun toLongDateString() = "Preview"
+
+    override fun year() = 2011
+
+    override fun month() = 1
+
+    override fun dayOfMonth() = 1
 }
