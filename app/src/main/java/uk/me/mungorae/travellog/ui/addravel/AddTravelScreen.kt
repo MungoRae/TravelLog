@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -112,7 +113,7 @@ fun AddTravelContent(
         )
         DateTextField(date = uiState.date, onDateChanged = onDatePickerDateSelected)
         LazyRow(
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp).testTag("ImageRow"),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {

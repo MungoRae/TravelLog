@@ -18,6 +18,11 @@ class ClockModule {
 
     @Provides
     fun providesTestClock(): Clock {
-        return Clock.fixed(Instant.parse("2007-12-03T10:15:30.00Z"), ZoneId.of("UTC"))
+        return TEST_CLOCK
+    }
+
+    companion object {
+        val TEST_CLOCK: Clock = Clock
+            .fixed(Instant.parse("2001-01-01T10:15:30.00Z"), ZoneId.of("UTC"))
     }
 }

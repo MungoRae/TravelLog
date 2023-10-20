@@ -49,7 +49,6 @@ class AppAndroidJUnitRunner : CucumberAndroidJUnitRunner() {
      * @return the absolute path for the report files
      */
     private fun getAbsoluteFilesPath(): String {
-        // sdcard/Android/data/cucumber.cukeulator
         val directory = targetContext.getExternalFilesDir(null)
         return File(directory, "reports").absolutePath
     }

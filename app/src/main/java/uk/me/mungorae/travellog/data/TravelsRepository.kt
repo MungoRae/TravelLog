@@ -15,6 +15,7 @@ interface TravelsRepository {
 
     class Impl @Inject constructor() : TravelsRepository {
         private val travels: MutableStateFlow<List<Travel>> = MutableStateFlow(emptyList())
+
         override fun createTravel(travel: Travel) {
             travels.update {
                 it.plus(travel)
