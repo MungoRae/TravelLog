@@ -16,6 +16,7 @@ data class AddTravelUiState(
     val name: String = "",
     val description: String = "",
     val date: DateTime,
+    val images: List<String> = emptyList(),
     val isTravelSaved: Boolean = false,
 )
 
@@ -37,11 +38,6 @@ class AddTravelViewModel @Inject constructor(
         _uiState.update { it.copy(description = newDescription) }
     }
 
-    fun onSubmit() {
-        travelsRepository.createTravel(Travel(name = uiState.value.name, uiState.value.description))
-        _uiState.update { it.copy(isTravelSaved = true) }
-    }
-
     fun onDateSelected(year: Int, month: Int, day: Int) {
         _uiState.update {
             it.copy(
@@ -52,5 +48,21 @@ class AddTravelViewModel @Inject constructor(
                 ),
             )
         }
+    }
+
+    fun onImageUrisSelected(uri: List<String>) {
+        _uiState.update { it.copy(images = it.images.plus(uri)) }
+    }
+
+    fun onSubmit() {
+        travelsRepository.createTravel(
+            Travel(
+                name = uiState.value.name,
+                description = uiState.value.description,
+                date = uiState.value.date,
+                imageUrls = uiState.value.images,
+            ),
+        )
+        _uiState.update { it.copy(isTravelSaved = true) }
     }
 }

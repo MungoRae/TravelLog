@@ -1,6 +1,5 @@
 package uk.me.mungorae.travellog.ui.addravel
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,14 +27,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,7 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import uk.me.mungorae.travellog.R
 import uk.me.mungorae.travellog.ui.reuseable.DateTextField
-import uk.me.mungorae.travellog.util.DateTime
+import uk.me.mungorae.travellog.ui.reuseable.PreviewDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,11 +49,11 @@ fun AddTravelScreen(
     onTravelsUpdated: () -> Unit,
     viewModel: AddTravelViewModel = hiltViewModel(),
 ) {
-    val (images, setImages) = remember { mutableStateOf<List<Uri>>(listOf()) }
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
-    ) {
-        setImages(images.plus(it))
+    ) { uris ->
+        uris.map { it.toString() }
+            .let { viewModel.onImageUrisSelected(it) }
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
@@ -65,7 +64,6 @@ fun AddTravelScreen(
         AddTravelContent(
             modifier = Modifier.padding(it),
             uiState,
-            images,
             viewModel::onNameChange,
             viewModel::onDescriptionChange,
             viewModel::onDateSelected,
@@ -82,12 +80,10 @@ fun AddTravelScreen(
 }
 
 @Preview
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTravelContent(
     modifier: Modifier = Modifier,
     uiState: AddTravelUiState = AddTravelUiState(date = PreviewDateTime()),
-    images: List<Uri> = emptyList(),
     onNameChanged: (String) -> Unit = {},
     onDescriptionChanged: (String) -> Unit = {},
     onDatePickerDateSelected: (Int, Int, Int) -> Unit = { _, _, _ -> },
@@ -104,12 +100,15 @@ fun AddTravelContent(
             value = uiState.name,
             onValueChange = onNameChanged,
             modifier = Modifier.padding(top = 8.dp),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         )
         TextField(
             label = { Text(text = stringResource(id = R.string.add_travel_label_description)) },
             value = uiState.description,
             onValueChange = onDescriptionChanged,
             modifier = Modifier.padding(top = 8.dp),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         )
         DateTextField(date = uiState.date, onDateChanged = onDatePickerDateSelected)
         LazyRow(
@@ -121,8 +120,8 @@ fun AddTravelContent(
                     AddImageButton { onAddImagePressed() }
                 }
             }
-            items(images.size) {
-                val uri = images[it]
+            items(uiState.images.size) {
+                val uri = uiState.images[it]
                 ImagePreviewContainer {
                     ImagePreview(uri = uri, count = it)
                 }
@@ -152,7 +151,7 @@ fun ImagePreviewContainer(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun ImagePreview(uri: Uri, count: Int) {
+fun ImagePreview(uri: String, count: Int) {
     AsyncImage(
         model = uri,
         contentDescription = stringResource(id = R.string.add_travel_image_description, count),
@@ -168,22 +167,10 @@ fun AddImageButton(onAddImagePressed: () -> Unit = {}) {
         onClick = { onAddImagePressed() },
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.add_photo),
+            painter = painterResource(id = R.drawable.ic_add_photo),
             contentDescription = stringResource(
                 id = R.string.add_travel_button_add_photo,
             ),
         )
     }
-}
-
-class PreviewDateTime : DateTime {
-    override fun toString(): String = "Preview"
-
-    override fun toLongDateString() = "Preview"
-
-    override fun year() = 2011
-
-    override fun month() = 1
-
-    override fun dayOfMonth() = 1
 }
